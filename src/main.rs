@@ -11,13 +11,10 @@ use termion::raw::IntoRawMode;
 mod table;
 
 fn main() {
-    let table = table::Table {
-        source_file: PathBuf::from("data.json"),
-        table_name: String::from("main"),
-    };
+    let table = table::Table::new(PathBuf::from("data.json"), String::from("main"));
 
     println!("{}", table.content());
-    println!("\x1b[38;2;0;255;0mHello!\x1b[0m")
+    table.display();
 }
 
 fn secondary() {
