@@ -1,4 +1,4 @@
-#[macro_use]
+// #[macro_use]
 extern crate json;
 extern crate termion;
 
@@ -8,6 +8,7 @@ use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::IntoRawMode;
 
+mod colors;
 mod table;
 
 fn main() {
@@ -17,6 +18,7 @@ fn main() {
     table.display();
 }
 
+#[allow(dead_code)]
 fn secondary() {
     let stdin = stdin();
     let mut stdout = stdout().into_raw_mode().unwrap();

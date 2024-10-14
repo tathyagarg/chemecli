@@ -1,0 +1,19 @@
+[0mA non-mutable value was assigned a value.[0m
+
+[0mErroneous code example:[0m
+
+[0m[0m[2mstruct SolarSystem {
+    earth: i32,
+}
+
+let ss = SolarSystem { earth: 3 };
+ss.earth = 2; // error![0m
+
+[0mTo fix this error, declare [0m[0m[2mss[0m as mutable by using the [0m[0m[2mmut[0m keyword:[0m
+
+[0m[0m[2mstruct SolarSystem {
+    earth: i32,
+}
+
+let mut ss = SolarSystem { earth: 3 }; // declaring `ss` as mutable
+ss.earth = 2; // ok![0m[0m

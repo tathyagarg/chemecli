@@ -1,8 +1,13 @@
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 extern crate json;
+
+use json::JsonValue;
+
+use crate::colors;
 
 pub struct Table {
     pub source_file: PathBuf,
@@ -31,7 +36,7 @@ const TABLE: [[&str; 18]; 10] = [
         "Te", "I", "Xe",
     ],
     [
-        "Ca", "Ba", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi",
+        "Cs", "Ba", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi",
         "Po", "At", "Rn",
     ],
     [
@@ -39,7 +44,7 @@ const TABLE: [[&str; 18]; 10] = [
         "Lv", "Ts", "Og",
     ],
     [
-        "", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ",
+        "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ",
         "  ", "  ", "  ",
     ],
     [
@@ -47,7 +52,7 @@ const TABLE: [[&str; 18]; 10] = [
         "Yb", "  ", "  ",
     ],
     [
-        "", "  ", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md",
+        "  ", "  ", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md",
         "No", "  ", "  ",
     ],
 ];
@@ -72,14 +77,32 @@ impl Table {
     }
 
     pub fn display(&self) {
-        for group in TABLE.iter() {
-            for element in group.iter() {
-                if element.len() == 1 {
-                    print!("{} ", element);
-                } else {
-                    print!("{}", element);
-                }
-                print!(" ");
+        let content = self.content();
+
+        let mut color_map: HashMap<String, String> = HashMap::new();
+
+        for i in TABLE {
+            for j in i {
+                color_map.insert(j.to_string(), String::new());
+            }
+        }
+
+        for group in content["groups"].members() {
+            let json_color = &group["color"];
+            let color: [u8; 3] = colors::json_to_rgb(json_color);
+
+            for element in group["elements"].members() {
+                *color_map
+                    .get_mut(&String::from(element.as_str().unwrap()))
+                    .unwrap() = colors::rgb_to_hex(&color);
+            }
+        }
+
+        for i in TABLE {
+            for j in i {
+                let push = if j.len() == 1 { " " } else { "" };
+
+                print!("{}{}{}\x1b[0m ", color_map[j], j, push);
             }
             println!();
         }
