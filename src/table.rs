@@ -1,13 +1,13 @@
+extern crate json;
+
+use crate::colors;
 use std::collections::HashMap;
+use std::vec::Vec;
+use termion::terminal_size;
+
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
-
-extern crate json;
-
-use json::JsonValue;
-
-use crate::colors;
 
 pub struct Table {
     pub source_file: PathBuf,
@@ -48,7 +48,7 @@ const TABLE: [[&str; 18]; 10] = [
         "  ", "  ", "  ",
     ],
     [
-        "", "  ", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm",
+        "  ", "  ", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm",
         "Yb", "  ", "  ",
     ],
     [
@@ -56,6 +56,26 @@ const TABLE: [[&str; 18]; 10] = [
         "No", "  ", "  ",
     ],
 ];
+
+fn get_terminal_width() -> u16 {
+    let (x, _) = terminal_size().unwrap();
+    x
+}
+
+fn seperator() {
+    for _ in 0..get_terminal_width() {
+        print!(".");
+    }
+    println!();
+}
+
+fn display_group(curr_obj: &(String, String), width: &u16) {
+    let (curr_group, curr_color) = curr_obj;
+    print!("{}█\x1b[0m {}", curr_color, curr_group);
+    for _ in 0..((width / 2) - (curr_group.len() + 2) as u16) {
+        print!(" ");
+    }
+}
 
 impl Table {
     pub fn new(source_file: PathBuf, table_name: String) -> Table {
@@ -79,32 +99,49 @@ impl Table {
     pub fn display(&self) {
         let content = self.content();
 
-        let mut color_map: HashMap<String, String> = HashMap::new();
-
-        for i in TABLE {
-            for j in i {
-                color_map.insert(j.to_string(), String::new());
-            }
-        }
+        let mut element_color_map: HashMap<String, String> = HashMap::new();
+        let mut group_color_map: Vec<(String, String)> = Vec::new();
 
         for group in content["groups"].members() {
             let json_color = &group["color"];
             let color: [u8; 3] = colors::json_to_rgb(json_color);
 
+            let hex = colors::rgb_to_hex(&color);
+
             for element in group["elements"].members() {
-                *color_map
-                    .get_mut(&String::from(element.as_str().unwrap()))
-                    .unwrap() = colors::rgb_to_hex(&color);
+                element_color_map.insert(String::from(element.as_str().unwrap()), hex.clone());
             }
+
+            group_color_map.push((String::from(group["name"].as_str().unwrap()), hex.clone()));
         }
 
-        for i in TABLE {
-            for j in i {
-                let push = if j.len() == 1 { " " } else { "" };
+        for group in TABLE {
+            for curr in group {
+                let push = if curr.len() == 1 { " " } else { "" };
 
-                print!("{}{}{}\x1b[0m ", color_map[j], j, push);
+                print!(
+                    "{}{}{}\x1b[0m ",
+                    element_color_map.get(curr).unwrap_or(&String::from("")),
+                    curr,
+                    push
+                );
             }
             println!();
+        }
+
+        seperator();
+
+        let width = get_terminal_width();
+
+        let mut curr_obj: &(String, String);
+
+        let group_count = group_color_map.len() / 2;
+
+        for i in 0..group_count {
+            curr_obj = &group_color_map[i];
+            display_group(curr_obj, &width);
+            curr_obj = &group_color_map[i + group_count];
+            display_group(curr_obj, &width);
         }
     }
 }

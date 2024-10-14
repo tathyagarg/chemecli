@@ -1,1 +1,87 @@
-{"main": {"groups": [{"color": [255, 0, 0], "elements": ["Li", "Na", "K", "Rb", "Cs", "Fr"], "name": "Alkali Metals"}, {"color": "BLUE", "elements": ["F"], "name": "Test"}]}}
+{
+  "main": {
+    "groups": [
+      {
+        "color": [255, 75, 0],
+        "elements": ["Li", "Na", "K", "Rb", "Cs", "Fr"],
+        "name": "Alkali Metals"
+      }, {
+        "color": [255, 37, 0],
+        "elements": ["Be", "Mg", "Ca", "Sr", "Ba", "Ra"],
+        "name": "Alkaline Earth Metals"
+      }, {
+        "color": [255, 0, 0],
+        "elements": ["Sc", "Y", "Lu", "Lr"],
+        "name": "Scandium Group"
+      }, {
+        "color": [255, 0, 47],
+        "elements": ["Ti", "Zr", "Hf", "Rf"],
+        "name": "Titanium Group"
+      }, {
+        "color": [255, 0, 95],
+        "elements": ["V", "Nb", "Ta", "Db"],
+        "name": "Vanadium Group"
+      }, {
+        "color": [255, 0, 135],
+        "elements": ["Cr", "Mo", "W", "Sg"],
+        "name": "Chromium Group"
+      }, {
+        "color": [255, 0, 175],
+        "elements": ["Mn", "Tc", "Re", "Bh"],
+        "name": "Manganese Group"
+      }, {
+        "color": [255, 0, 255],
+        "elements": ["Fe", "Ru", "Os", "Hs"],
+        "name": "Iron Group"
+      }, {
+        "color": [175, 0, 255],
+        "elements": ["Co", "Rh", "Ir", "Mt"],
+        "name": "Cobalt Group"
+      }, {
+        "color": [95, 0, 255],
+        "elements": ["Ni", "Pd", "Pt", "Ds"],
+        "name": "Nickel Group"
+      }, {
+        "color": [0, 0, 255],
+        "elements": ["Cu", "Ag", "Au", "Rg"],
+        "name": "Copper Group"
+      }, {
+        "color": [0, 85, 255],
+        "elements": ["Zn", "Cd", "Hg", "Cn"],
+        "name": "Zinc Group"
+      }, {
+        "color": [0, 135, 255],
+        "elements": ["B", "Al", "Ga", "In", "Tl", "Nh"],
+        "name": "Triels"
+      }, {
+        "color": [0, 195, 255],
+        "elements": ["C", "Si", "Ge", "Sn", "Pb", "Fl"],
+        "name": "Tetrels"
+      }, {
+        "color": [0, 255, 255],
+        "elements": ["N", "P", "As", "Sb", "Bi", "Mc"],
+        "name": "Pnictogens"
+      }, {
+        "color": [0, 255, 175],
+        "elements": ["O", "S", "Se", "Te", "Po", "Lv"],
+        "name": "Chalcogens"
+      }, {
+        "color": [0, 255, 0],
+        "elements": ["F", "Cl", "Br", "I", "At", "Ts"],
+        "name": "Halogens"
+      }, {
+        "color": [175, 255, 0],
+        "elements": ["He", "Ne", "Ar", "Kr", "Xe", "Rn", "Og"],
+        "name": "Noble Gases"
+      }, {
+        "color": [255, 255, 0],
+        "elements": ["La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb"],
+        "name": "Lanthanides"
+      }, {
+        "color": [255, 175, 0],
+        "elements": ["Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No"],
+        "name": "Actinides"
+      }
+    ]
+  }
+}
