@@ -57,23 +57,21 @@ const TABLE: [[&str; 18]; 10] = [
     ],
 ];
 
-fn get_terminal_width() -> u16 {
-    let (x, _) = terminal_size().unwrap();
-    x
-}
-
-fn seperator() {
-    for _ in 0..get_terminal_width() {
-        print!(".");
-    }
-    println!();
-}
-
-fn display_group(curr_obj: &(String, String), width: &u16) {
+fn display_group(curr_obj: &(String, String), result: &mut String, start: u8) {
     let (curr_group, curr_color) = curr_obj;
-    print!("{}█\x1b[0m {}", curr_color, curr_group);
-    for _ in 0..((width / 2) - (curr_group.len() + 2) as u16) {
-        print!(" ");
+    if start == 0 {
+        (*result).push_str("│");
+    }
+
+    (*result).push_str(curr_color);
+    (*result).push_str("█\x1b[0m ");
+    (*result).push_str(curr_group);
+
+    for _ in 0..(27 - (curr_group.len() + 2) as u16) {
+        (*result).push_str(" ");
+    }
+    if start == 1 {
+        (*result).push_str("│");
     }
 }
 
@@ -96,11 +94,19 @@ impl Table {
         json_data[&self.table_name].clone()
     }
 
-    pub fn display(&self) {
+    pub fn display(&self) -> String {
+        let mut result;
+
         let content = self.content();
 
         let mut element_color_map: HashMap<String, String> = HashMap::new();
         let mut group_color_map: Vec<(String, String)> = Vec::new();
+
+        result = format!("╭{}", self.table_name);
+        for _ in 0..(54 - (self.table_name.len())) {
+            result.push('─');
+        }
+        result.push_str("╮\r\n");
 
         for group in content["groups"].members() {
             let json_color = &group["color"];
@@ -116,32 +122,48 @@ impl Table {
         }
 
         for group in TABLE {
-            for curr in group {
+            for (i, curr) in group.iter().enumerate() {
                 let push = if curr.len() == 1 { " " } else { "" };
 
-                print!(
-                    "{}{}{}\x1b[0m ",
-                    element_color_map.get(curr).unwrap_or(&String::from("")),
-                    curr,
-                    push
-                );
+                if i == 0 {
+                    result.push('│');
+                }
+
+                result.push_str(element_color_map.get(*curr).unwrap_or(&String::from("")));
+                result.push_str(curr);
+                result.push_str(push);
+                result.push(' ');
+                result.push_str("\x1b[0m");
+
+                if i == 17 {
+                    result.push('│');
+                }
             }
-            println!();
+            result.push_str("\r\n");
         }
 
-        seperator();
-
-        let width = get_terminal_width();
+        result.push_str("│                                                      │\r\n");
 
         let mut curr_obj: &(String, String);
-
         let group_count = group_color_map.len() / 2;
 
         for i in 0..group_count {
             curr_obj = &group_color_map[i];
-            display_group(curr_obj, &width);
+            display_group(curr_obj, &mut result, 0);
             curr_obj = &group_color_map[i + group_count];
-            display_group(curr_obj, &width);
+            display_group(curr_obj, &mut result, 1);
+            result.push_str("\r\n");
         }
+
+        if group_count * 2 != group_color_map.len() {
+            curr_obj = group_color_map.last().unwrap();
+            display_group(curr_obj, &mut result, 0);
+            for _ in 0..27 {
+                result.push(' ');
+            }
+            result.push_str("│\r\n");
+        }
+        result.push_str("╰──────────────────────────────────────────────────────╯\r\n");
+        result
     }
 }

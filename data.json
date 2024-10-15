@@ -83,5 +83,23 @@
         "name": "Actinides"
       }
     ]
+  },
+  "test": {
+    "groups": [
+      {
+        "color": [255, 0, 0],
+        "elements": ["H"],
+        "name": "I love turtles"
+      }
+    ]
+  },
+  "Overly Long Name that really shouldn't be being": {
+    "groups": [
+      {
+        "color": [255, 255, 0],
+        "elements": ["H", "He"],
+        "name": "I hate >:( turtles"
+      }
+    ]
   }
 }
