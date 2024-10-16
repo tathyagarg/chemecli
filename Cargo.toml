@@ -6,3 +6,5 @@ edition = "2021"
 [dependencies]
 termion = "4.0.3"
 json = "*"
+textwrap = "*"
+itertools = "0.13.0"

@@ -1,6 +1,7 @@
 // #[macro_use]
 extern crate json;
 extern crate termion;
+extern crate textwrap;
 
 use std::fs::File;
 use std::io::{stdin, stdout, Read, Write};
@@ -58,6 +59,8 @@ fn get_button_row(prev_button: String, next_button: String) -> String {
         buffer.push_str(format!("{}{}\r\n", l1, l2).as_str());
     }
 
+    buffer.pop();
+    buffer.pop();
     buffer
 }
 
@@ -114,11 +117,12 @@ fn main() {
             Key::Char('\n') => {
                 buffer = temp_buffer.clone();
                 temp_buffer = String::new();
-                buffer.push_str(
-                    format!("\r\n{}", commands::parse_command(&element_reader, &buffer)).as_str(),
-                );
+                buffer = format!("{}", commands::parse_command(&element_reader, &buffer))
             }
-            Key::Char(letter) => temp_buffer.push(*letter),
+            Key::Char(letter) => {
+                buffer = String::new();
+                temp_buffer.push(*letter);
+            }
             Key::Backspace => {
                 temp_buffer.pop();
             }
@@ -145,7 +149,6 @@ fn main() {
             buffer
         )
         .unwrap();
-        buffer = String::new();
 
         stdout.flush().unwrap();
     }
