@@ -12,6 +12,8 @@ use termion::input::TermRead;
 use termion::raw::IntoRawMode;
 
 mod colors;
+mod commands;
+mod notes;
 mod table;
 
 fn get_tables(source_file: &PathBuf) -> Vec<String> {
@@ -60,7 +62,11 @@ fn get_button_row(prev_button: String, next_button: String) -> String {
 }
 
 fn main() {
+    // -------------- INITIALIZATION --------------
     let source_file: PathBuf = PathBuf::from("data.json");
+    let element_reader = notes::NotesReader::new(PathBuf::from("elements.json"));
+    let mut temp_buffer: String = String::new();
+    let mut buffer: String = String::new();
 
     let table_names: Vec<String> = get_tables(&source_file);
     let mut tables: Vec<table::Table> = Vec::new();
@@ -94,15 +100,28 @@ fn main() {
 
     write!(
         stdout,
-        "{}{}",
+        "{}{}{}\r\n",
         tables[curr].display(),
-        get_button_row(prev_button, next_button)
+        get_button_row(prev_button, next_button),
+        buffer
     )
     .unwrap();
 
+    // -------------- EVENT LOOP --------------
     for k in stdin.keys() {
         match k.as_ref().unwrap() {
             Key::Ctrl('c') => break,
+            Key::Char('\n') => {
+                buffer = temp_buffer.clone();
+                temp_buffer = String::new();
+                buffer.push_str(
+                    format!("\r\n{}", commands::parse_command(&element_reader, &buffer)).as_str(),
+                );
+            }
+            Key::Char(letter) => temp_buffer.push(*letter),
+            Key::Backspace => {
+                temp_buffer.pop();
+            }
             Key::Left => curr = if curr == 0 { table_count - 1 } else { curr - 1 },
             Key::Right => curr = (curr + 1) % table_count,
             _ => {}
@@ -117,13 +136,16 @@ fn main() {
 
         write!(
             stdout,
-            "{}{}{}{}",
+            "{}{}{}{}{}{}\r\n",
             termion::clear::All,
             termion::cursor::Goto(1, 1),
             tables[curr].display(),
-            get_button_row(prev_button, next_button)
+            get_button_row(prev_button, next_button),
+            temp_buffer,
+            buffer
         )
         .unwrap();
+        buffer = String::new();
 
         stdout.flush().unwrap();
     }

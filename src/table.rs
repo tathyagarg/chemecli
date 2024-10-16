@@ -3,7 +3,6 @@ extern crate json;
 use crate::colors;
 use std::collections::HashMap;
 use std::vec::Vec;
-use termion::terminal_size;
 
 use std::fs::File;
 use std::io::prelude::*;
@@ -60,7 +59,7 @@ const TABLE: [[&str; 18]; 10] = [
 fn display_group(curr_obj: &(String, String), result: &mut String, start: u8) {
     let (curr_group, curr_color) = curr_obj;
     if start == 0 {
-        (*result).push_str("│");
+        (*result).push('│');
     }
 
     (*result).push_str(curr_color);
@@ -68,10 +67,10 @@ fn display_group(curr_obj: &(String, String), result: &mut String, start: u8) {
     (*result).push_str(curr_group);
 
     for _ in 0..(27 - (curr_group.len() + 2) as u16) {
-        (*result).push_str(" ");
+        (*result).push(' ');
     }
     if start == 1 {
-        (*result).push_str("│");
+        (*result).push('│');
     }
 }
 
