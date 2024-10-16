@@ -39,5 +39,6 @@ A CLI tool to help me with chemistry because I don't understand it.
     - [ ] Selection of displayed in-built tables
     - [ ] Table element borders
 - [ ] Command line arguments to show additional data
+    - [ ] Atomic radius
 - [ ] Empirical formula calculator
 
