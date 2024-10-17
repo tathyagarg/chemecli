@@ -20,3 +20,13 @@ pub fn get_tables(source_file: &PathBuf) -> Vec<String> {
 
     tables
 }
+
+pub fn wrap(text: &String, opts: &textwrap::Options) -> Vec<String> {
+    let mut res = Vec::new();
+
+    for elem in textwrap::wrap(text.as_str(), opts) {
+        res.push(elem.to_string());
+    }
+
+    res
+}

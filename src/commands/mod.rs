@@ -1,9 +1,11 @@
 pub mod delete;
+pub mod lookup;
 pub mod read;
 pub mod utils;
 pub mod write;
 
 use delete::delete;
+use lookup::{list, lookup};
 use read::read;
 use write::{add, update};
 
@@ -19,6 +21,8 @@ pub fn parse_command(nr: &mut NotesReader, command: &String) -> String {
         Some("add") | Some("a") => add(&mut parts, nr),
         Some("update") | Some("u") => update(&mut parts, nr),
         Some("delete") | Some("d") => delete(&mut parts, nr),
+        Some("lookup") | Some("l") => lookup(&mut parts, nr),
+        Some("ll") => list(&mut parts, nr),
         _ => String::from("none"),
     }
 }

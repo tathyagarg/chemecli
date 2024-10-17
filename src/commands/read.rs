@@ -1,8 +1,9 @@
 use itertools::EitherOrBoth::{Both, Left, Right};
 use itertools::Itertools;
 
-use crate::commands::utils::{parse_strings, wrap};
+use crate::commands::utils::parse_strings;
 use crate::notes::NotesReader;
+use crate::utils::wrap;
 use std::collections::VecDeque;
 
 pub fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {

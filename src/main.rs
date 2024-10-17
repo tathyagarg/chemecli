@@ -11,6 +11,7 @@ use termion::event::Key;
 use termion::input::TermRead;
 use termion::raw::IntoRawMode;
 
+mod boxup;
 mod buttons;
 mod colors;
 mod commands;
@@ -26,28 +27,16 @@ fn main() {
     let mut buffer: String = String::new();
 
     let table_names: Vec<String> = utils::get_tables(&source_file);
-    let mut tables: Vec<table::models::Table> = Vec::new();
-    let mut table_count = 0;
-
-    for table_name in table_names.clone() {
-        tables.push(table::models::Table::new(source_file.clone(), table_name));
-        table_count += 1;
-    }
+    let tables: Vec<table::models::Table> = (table_names.clone())
+        .iter()
+        .map(|table_name| table::models::Table::new(source_file.clone(), table_name.clone()))
+        .collect::<Vec<table::models::Table>>();
+    let table_count = tables.len();
 
     let mut curr: usize = 0;
 
     let stdin = stdin();
     let mut stdout = stdout().into_raw_mode().unwrap();
-
-    write!(
-        stdout,
-        "{}{}",
-        termion::clear::All,
-        termion::cursor::Goto(1, 1)
-    )
-    .unwrap();
-
-    stdout.flush().unwrap();
 
     let mut prev_button: Button = Button::new(
         String::from("<="),
@@ -60,12 +49,16 @@ fn main() {
 
     write!(
         stdout,
-        "{}{}{}\r\n",
+        "{}{}{}{}{}\r\n",
+        termion::clear::All,
+        termion::cursor::Goto(1, 1),
         tables[curr].display(),
         buttons::make_button_row(&prev_button, &next_button),
         buffer
     )
     .unwrap();
+
+    stdout.flush().unwrap();
 
     // -------------- EVENT LOOP --------------
     for k in stdin.keys() {

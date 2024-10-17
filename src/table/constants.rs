@@ -40,3 +40,6 @@ pub const TABLE: [[&str; 18]; 10] = [
         "No", "  ", "  ",
     ],
 ];
+
+pub const BUILTINS: &'static [&'static str] = &["Skibidi", "Toilet"];
+// pub const BUILTINS: Vec<String> = vec![String::from("Skibi"), String::from("Toiliet")];

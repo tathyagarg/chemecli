@@ -75,24 +75,25 @@ impl NotesReader {
         self.contents = self.get_contents();
     }
 
-    pub fn add_notes(&mut self, target: &String, key: &String, value: &String) {
+    pub fn add_notes(&mut self, target: &String, key: &str, value: &str) {
         let mut buffer = self.get_contents();
         let mut subbuffer = buffer[target].clone();
 
-        subbuffer.push((key.clone(), value.clone()));
+        subbuffer.push((String::from(key), String::from(value)));
         buffer.get_mut(target).map(|v| *v = subbuffer);
 
         self.contents = buffer;
         self.write_to_file();
     }
 
-    pub fn update_notes(&mut self, target: &String, key: &String, value: &String) {
+    pub fn update_notes(&mut self, target: &String, key: &String, value: &str) {
         let mut buffer = self.get_contents();
         let mut subbuffer = buffer[target].clone();
 
         for (i, (k, _)) in subbuffer.iter().enumerate() {
             if k == key {
-                subbuffer[i] = (key.clone(), value.clone());
+                subbuffer[i] = (key.clone(), String::from(value));
+
                 break;
             }
         }
@@ -102,9 +103,9 @@ impl NotesReader {
         self.write_to_file();
     }
 
-    pub fn create_notes(&mut self, target: &String) {
+    pub fn create_notes(&mut self, target: &str) {
         let mut buffer = self.get_contents();
-        buffer.insert(target.clone(), Vec::new());
+        buffer.insert(String::from(target), Vec::new());
 
         self.contents = buffer;
         self.write_to_file();
