@@ -26,42 +26,6 @@ impl Button {
         )
     }
 
-    // pub fn display(&self) -> String {
-    //     let mut buffer = String::new();
-
-    //     buffer.push('╭');
-    //     buffer.push_str(
-    //         (0..(self.width - 2))
-    //             .map(|_| "─")
-    //             .collect::<String>()
-    //             .as_str(),
-    //     );
-    //     buffer.push_str("╮\n");
-
-    //     buffer.push_str(format!("│ {: ^24} │\n", self.arrow).as_str());
-
-    //     let text = if self.text.len() > 26 {
-    //         let subbuffer = &self.text[..21];
-    //         subbuffer.to_string().push_str("...");
-    //         subbuffer
-    //     } else {
-    //         &self.text
-    //     };
-
-    //     buffer.push_str(format!("│ {: ^24} │\n", text).as_str());
-
-    //     buffer.push('╰');
-    //     buffer.push_str(
-    //         (0..(self.width - 2))
-    //             .map(|_| "─")
-    //             .collect::<String>()
-    //             .as_str(),
-    //     );
-    //     buffer.push_str("╯\n");
-
-    //     buffer
-    // }
-
     pub fn update(&mut self, text: String) {
         self.text = text;
     }
