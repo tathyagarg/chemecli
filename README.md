@@ -10,7 +10,7 @@ A CLI tool to help me with chemistry because I don't understand it.
 - [x] Viewing tabulated notes
 
 ## TODO
-- [ ] Specific property notes lookup
+- [x] Specific property notes lookup
 - [ ] Adding notes through CLI
 - [ ] Editing notes through CLI
 - [ ] Deleteing notes through CLI
@@ -38,7 +38,5 @@ A CLI tool to help me with chemistry because I don't understand it.
     - [ ] Glob support for files
     - [ ] Selection of displayed in-built tables
     - [ ] Table element borders
-- [ ] Command line arguments to show additional data
-    - [ ] Atomic radius
 - [ ] Empirical formula calculator
 

@@ -3,14 +3,14 @@ extern crate textwrap;
 use itertools::{EitherOrBoth::*, Itertools};
 
 use crate::notes::NotesReader;
-use std::str::Split;
+use std::collections::VecDeque;
 
 pub fn parse_command(nr: &NotesReader, command: &String) -> String {
-    let mut parts = command.as_str().split(" ");
-    let command = parts.next().unwrap();
+    let mut parts = command.as_str().split(" ").collect::<VecDeque<&str>>();
+    let command = parts.pop_front();
 
     match command {
-        "read" | "r" => read(&mut parts, nr),
+        Some("read") | Some("r") => read(&mut parts, nr),
         _ => String::from("none"),
     }
 }
@@ -25,9 +25,26 @@ fn wrap(text: &String, opts: &textwrap::Options) -> Vec<String> {
     res
 }
 
-fn read(arg: &mut Split<&str>, nr: &NotesReader) -> String {
-    let target = String::from(arg.next().unwrap());
-    let data = nr.get_notes(&target);
+fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
+    let target = String::from(arg.pop_front().unwrap());
+    let mut data: Vec<(String, String)> = nr.get_notes(&target);
+    let mut props: Vec<&str> = Vec::new();
+
+    while let Some(prop) = arg.pop_front() {
+        props.push(prop);
+    }
+
+    if !props.is_empty() {
+        let mut buffer: Vec<(String, String)> = Vec::new();
+        for (key, value) in &data {
+            if props.contains(&key.as_str()) {
+                buffer.push((key.clone(), value.clone()));
+            }
+        }
+
+        data = buffer;
+    }
+
     let mut res = String::new();
     let mut longest_key = data.iter().map(|(k, _)| String::len(k)).max().unwrap() + 1;
     let mut longest_value = data.iter().map(|(_, v)| String::len(v)).max().unwrap() + 1;
@@ -91,13 +108,28 @@ fn read(arg: &mut Split<&str>, nr: &NotesReader) -> String {
                     );
                 }
 
+                resk = resk.replace("_", " ");
+                let mut resk_chars = resk.chars();
+                resk = match resk_chars.next() {
+                    Some(c) => c.to_uppercase().chain(resk_chars).collect(),
+                    None => String::new(),
+                };
+
                 res.push_str(format!("│{}│{}│\r\n", resk, resv).as_str());
             }
         } else {
+            let resk = key;
+            let resk = &resk.replace("_", " ");
+            let mut resk_chars = resk.chars();
+            let resk = match resk_chars.next() {
+                Some(c) => &c.to_uppercase().chain(resk_chars).collect(),
+                None => &String::new(),
+            };
+
             res.push_str(
                 format!(
                     "│{}{}│{}{}│\r\n",
-                    textwrap::fill(key, &key_opts),
+                    textwrap::fill(resk, &key_opts),
                     if key.len() <= longest_key {
                         (0..(longest_key - key.len()))
                             .map(|_| " ")
