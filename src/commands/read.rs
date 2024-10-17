@@ -1,67 +1,11 @@
-extern crate textwrap;
+use itertools::EitherOrBoth::{Both, Left, Right};
+use itertools::Itertools;
 
-use itertools::{EitherOrBoth::*, Itertools};
-
+use crate::commands::utils::{parse_strings, wrap};
 use crate::notes::NotesReader;
 use std::collections::VecDeque;
 
-pub fn parse_command(nr: &mut NotesReader, command: &String) -> String {
-    let mut parts = command.as_str().split(" ").collect::<VecDeque<&str>>();
-    let command = parts.pop_front();
-
-    match command {
-        Some("read") | Some("r") => read(&mut parts, nr),
-        Some("add") | Some("a") => add(&mut parts, nr),
-        Some("update") | Some("u") => update(&mut parts, nr),
-        Some("delete") | Some("d") => delete(&mut parts, nr),
-        _ => String::from("none"),
-    }
-}
-
-fn wrap(text: &String, opts: &textwrap::Options) -> Vec<String> {
-    let mut res = Vec::new();
-
-    for elem in textwrap::wrap(text.as_str(), opts) {
-        res.push(elem.to_string());
-    }
-
-    res
-}
-
-fn parse_strings(items: &Vec<&str>) -> Vec<String> {
-    let mut res: Vec<String> = Vec::new();
-    let mut buffer = String::new();
-
-    for item in items {
-        if item.ends_with('"') {
-            let mut temp_buffer = item.chars();
-            temp_buffer.next_back();
-            if item.starts_with('"') {
-                temp_buffer.next();
-            }
-            buffer.push_str(temp_buffer.collect::<String>().as_str());
-
-            res.push(buffer);
-
-            buffer = String::new();
-        } else if !buffer.is_empty() {
-            buffer.push_str(item);
-            buffer.push(' ');
-        } else if item.starts_with('"') {
-            let mut temp_buffer = item.chars();
-            temp_buffer.next();
-            buffer.push_str(temp_buffer.collect::<String>().as_str());
-            buffer.push(' ');
-        } else {
-            println!("Hello!");
-            res.push(item.to_string());
-        }
-    }
-
-    res
-}
-
-fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
+pub fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
     let target = String::from(arg.pop_front().unwrap());
     let mut data: Vec<(String, String)> = nr.get_notes(&target);
     let mut props: Vec<&str> = Vec::new();
@@ -117,7 +61,11 @@ fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
             let wrapped_key = wrap(key, &key_opts);
             let wrapped_value = wrap(value, &value_opts);
 
-            for pair in wrapped_key.iter().zip_longest(wrapped_value.iter()) {
+            for (i, pair) in wrapped_key
+                .iter()
+                .zip_longest(wrapped_value.iter())
+                .enumerate()
+            {
                 let (k, v) = match pair {
                     Both(k1, v1) => (k1, v1),
                     Left(k1) => (k1, &(0..longest_value).map(|_| " ").collect::<String>()),
@@ -146,11 +94,13 @@ fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
                 }
 
                 resk = resk.replace("_", " ");
-                let mut resk_chars = resk.chars();
-                resk = match resk_chars.next() {
-                    Some(c) => c.to_uppercase().chain(resk_chars).collect(),
-                    None => String::new(),
-                };
+                if i == 0 {
+                    let mut resk_chars = resk.chars();
+                    resk = match resk_chars.next() {
+                        Some(c) => c.to_uppercase().chain(resk_chars).collect(),
+                        None => String::new(),
+                    };
+                }
 
                 res.push_str(format!("│{}│{}│\r\n", resk, resv).as_str());
             }
@@ -208,63 +158,4 @@ fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
     res.push_str("╯\r\n");
 
     res
-}
-
-fn add(arg: &mut VecDeque<&str>, nr: &mut NotesReader) -> String {
-    let target = String::from(arg.pop_front().unwrap());
-    let mut props: Vec<&str> = Vec::new();
-
-    while let Some(prop) = arg.pop_front() {
-        props.push(prop);
-    }
-
-    if !props.is_empty() {
-        let props = parse_strings(&props);
-        if let [key, value] = &props[..] {
-            nr.add_notes(&target, key, value);
-        }
-    } else {
-        nr.create_notes(&target);
-    }
-
-    String::new()
-}
-
-fn update(arg: &mut VecDeque<&str>, nr: &mut NotesReader) -> String {
-    let target = String::from(arg.pop_front().unwrap());
-    let mut props: Vec<&str> = Vec::new();
-
-    while let Some(prop) = arg.pop_front() {
-        props.push(prop);
-    }
-
-    if !props.is_empty() {
-        let props = parse_strings(&props);
-        if let [key, value] = &props[..] {
-            nr.update_notes(&target, key, value);
-        }
-    }
-
-    String::new()
-}
-
-fn delete(arg: &mut VecDeque<&str>, nr: &mut NotesReader) -> String {
-    let target = String::from(arg.pop_front().unwrap());
-    let mut props: Vec<&str> = Vec::new();
-
-    while let Some(prop) = arg.pop_front() {
-        props.push(prop);
-    }
-    println!("{:?}", props);
-
-    if !props.is_empty() {
-        let props = parse_strings(&props);
-        for key in props {
-            nr.delete_notes(&target, &key);
-        }
-    } else {
-        nr.destroy_notes(&target);
-    }
-
-    String::new()
 }

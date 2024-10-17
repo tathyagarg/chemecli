@@ -40,7 +40,7 @@ fn get_button(table_name: &String, direction: String) -> String {
     let mut buffer = String::new();
 
     buffer.push_str("╭──────────────────────────╮\n");
-    buffer.push_str(format!("│{: ^26}│\n", direction).as_str());
+    buffer.push_str(format!("│ {: ^24} │\n", direction).as_str());
     let name = if table_name.len() > 26 {
         &format!("{}...", &table_name.to_string()[0..21])
     } else {
@@ -72,11 +72,11 @@ fn main() {
     let mut buffer: String = String::new();
 
     let table_names: Vec<String> = get_tables(&source_file);
-    let mut tables: Vec<table::Table> = Vec::new();
+    let mut tables: Vec<table::models::Table> = Vec::new();
     let mut table_count = 0;
 
     for table_name in table_names.clone() {
-        tables.push(table::Table::new(source_file.clone(), table_name));
+        tables.push(table::models::Table::new(source_file.clone(), table_name));
         table_count += 1;
     }
 
@@ -97,9 +97,9 @@ fn main() {
 
     let mut prev_button: String = get_button(
         &String::from(table_names.last().unwrap()),
-        String::from("<-"),
+        String::from("<="),
     );
-    let mut next_button: String = get_button(&table_names[1], String::from("->"));
+    let mut next_button: String = get_button(&table_names[1], String::from("=>"));
 
     write!(
         stdout,
@@ -117,7 +117,7 @@ fn main() {
             Key::Char('\n') => {
                 buffer = temp_buffer.clone();
                 temp_buffer = String::new();
-                buffer = format!("{}", commands::parse_command(&mut nr, &buffer))
+                buffer = commands::parse_command(&mut nr, &buffer);
             }
             Key::Char(letter) => {
                 buffer = String::new();
@@ -133,10 +133,10 @@ fn main() {
 
         prev_button = get_button(
             &table_names[if curr == 0 { table_count - 1 } else { curr - 1 }],
-            String::from("<-"),
+            String::from("<="),
         );
 
-        next_button = get_button(&table_names[(curr + 1) % table_count], String::from("->"));
+        next_button = get_button(&table_names[(curr + 1) % table_count], String::from("=>"));
 
         write!(
             stdout,

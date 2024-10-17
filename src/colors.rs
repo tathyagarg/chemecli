@@ -1,6 +1,8 @@
 use json::JsonValue;
 use std::collections::HashMap;
 
+pub const RESET: &str = "\x1b[0m";
+
 pub fn json_to_rgb(json_object: &JsonValue) -> [u8; 3] {
     if let json::JsonValue::Array(items) = json_object {
         [

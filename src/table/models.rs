@@ -1,9 +1,8 @@
-extern crate json;
-
 use crate::colors;
-use std::collections::HashMap;
-use std::vec::Vec;
+use crate::table::constants::TABLE;
+use crate::table::utils::display_group;
 
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
@@ -11,67 +10,6 @@ use std::path::PathBuf;
 pub struct Table {
     pub source_file: PathBuf,
     pub table_name: String,
-}
-
-const TABLE: [[&str; 18]; 10] = [
-    [
-        "H", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ",
-        "  ", "  ", "He",
-    ],
-    [
-        "Li", "Be", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "B", "C", "N", "O",
-        "F", "Ne",
-    ],
-    [
-        "Na", "Mg", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "Al", "Si", "P",
-        "S", "Cl", "Ar",
-    ],
-    [
-        "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As",
-        "Se", "Br", "Kr",
-    ],
-    [
-        "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb",
-        "Te", "I", "Xe",
-    ],
-    [
-        "Cs", "Ba", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi",
-        "Po", "At", "Rn",
-    ],
-    [
-        "Fr", "Ra", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh", "Fl", "Mc",
-        "Lv", "Ts", "Og",
-    ],
-    [
-        "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ", "  ",
-        "  ", "  ", "  ",
-    ],
-    [
-        "  ", "  ", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm",
-        "Yb", "  ", "  ",
-    ],
-    [
-        "  ", "  ", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md",
-        "No", "  ", "  ",
-    ],
-];
-
-fn display_group(curr_obj: &(String, String), result: &mut String, start: u8) {
-    let (curr_group, curr_color) = curr_obj;
-    if start == 0 {
-        (*result).push('│');
-    }
-
-    (*result).push_str(curr_color);
-    (*result).push_str("█\x1b[0m ");
-    (*result).push_str(curr_group);
-
-    for _ in 0..(27 - (curr_group.len() + 2) as u16) {
-        (*result).push(' ');
-    }
-    if start == 1 {
-        (*result).push('│');
-    }
 }
 
 impl Table {
@@ -102,9 +40,12 @@ impl Table {
         let mut group_color_map: Vec<(String, String)> = Vec::new();
 
         result = format!("╭{}", self.table_name);
-        for _ in 0..(54 - (self.table_name.len())) {
-            result.push('─');
-        }
+        result.push_str(
+            (0..(54 - self.table_name.len()))
+                .map(|_| "─")
+                .collect::<String>()
+                .as_str(),
+        );
         result.push_str("╮\r\n");
 
         for group in content["groups"].members() {
@@ -141,7 +82,9 @@ impl Table {
             result.push_str("\r\n");
         }
 
-        result.push_str("│                                                      │\r\n");
+        result.push('│');
+        result.push_str((0..54).map(|_| " ").collect::<String>().as_str());
+        result.push_str("│\r\n");
 
         let mut curr_obj: &(String, String);
         let group_count = group_color_map.len() / 2;
@@ -162,7 +105,9 @@ impl Table {
             }
             result.push_str("│\r\n");
         }
-        result.push_str("╰──────────────────────────────────────────────────────╯\r\n");
+        result.push('╰');
+        result.push_str((0..54).map(|_| "─").collect::<String>().as_str());
+        result.push_str("╯\r\n");
         result
     }
 }
