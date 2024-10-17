@@ -13,8 +13,7 @@ A CLI tool to help me with chemistry because I don't understand it.
 - [x] Specific property notes lookup
 - [x] Adding notes through CLI
 - [x] Editing notes through CLI
-- [ ] Deleteing notes through CLI
-- [ ] Update titles of notes to show common name
+- [x] Deleteing notes through CLI
 - [ ] Migrate to termion to display colors
 - [ ] More inbuilt data
 - [ ] Command line arguments for groups

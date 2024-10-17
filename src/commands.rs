@@ -13,6 +13,7 @@ pub fn parse_command(nr: &mut NotesReader, command: &String) -> String {
         Some("read") | Some("r") => read(&mut parts, nr),
         Some("add") | Some("a") => add(&mut parts, nr),
         Some("update") | Some("u") => update(&mut parts, nr),
+        Some("delete") | Some("d") => delete(&mut parts, nr),
         _ => String::from("none"),
     }
 }
@@ -242,6 +243,27 @@ fn update(arg: &mut VecDeque<&str>, nr: &mut NotesReader) -> String {
         if let [key, value] = &props[..] {
             nr.update_notes(&target, key, value);
         }
+    }
+
+    String::new()
+}
+
+fn delete(arg: &mut VecDeque<&str>, nr: &mut NotesReader) -> String {
+    let target = String::from(arg.pop_front().unwrap());
+    let mut props: Vec<&str> = Vec::new();
+
+    while let Some(prop) = arg.pop_front() {
+        props.push(prop);
+    }
+    println!("{:?}", props);
+
+    if !props.is_empty() {
+        let props = parse_strings(&props);
+        for key in props {
+            nr.delete_notes(&target, &key);
+        }
+    } else {
+        nr.destroy_notes(&target);
     }
 
     String::new()

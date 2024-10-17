@@ -109,4 +109,29 @@ impl NotesReader {
         self.contents = buffer;
         self.write_to_file();
     }
+
+    pub fn delete_notes(&mut self, target: &String, key: &String) {
+        let mut buffer = self.get_contents();
+        let mut subbuffer = buffer[target].clone();
+
+        for (i, (k, _)) in subbuffer.iter().enumerate() {
+            if k == key {
+                subbuffer.remove(i);
+                break;
+            }
+        }
+
+        buffer.get_mut(target).map(|v| *v = subbuffer);
+
+        self.contents = buffer;
+        self.write_to_file();
+    }
+
+    pub fn destroy_notes(&mut self, target: &String) {
+        let mut buffer = self.get_contents();
+        buffer.remove(target);
+
+        self.contents = buffer;
+        self.write_to_file();
+    }
 }
