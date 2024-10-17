@@ -67,7 +67,7 @@ fn get_button_row(prev_button: String, next_button: String) -> String {
 fn main() {
     // -------------- INITIALIZATION --------------
     let source_file: PathBuf = PathBuf::from("data.json");
-    let element_reader = notes::NotesReader::new(PathBuf::from("elements.json"));
+    let mut nr = notes::NotesReader::new(PathBuf::from("elements.json"));
     let mut temp_buffer: String = String::new();
     let mut buffer: String = String::new();
 
@@ -117,7 +117,7 @@ fn main() {
             Key::Char('\n') => {
                 buffer = temp_buffer.clone();
                 temp_buffer = String::new();
-                buffer = format!("{}", commands::parse_command(&element_reader, &buffer))
+                buffer = format!("{}", commands::parse_command(&mut nr, &buffer))
             }
             Key::Char(letter) => {
                 buffer = String::new();

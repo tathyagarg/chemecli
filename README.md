@@ -11,8 +11,8 @@ A CLI tool to help me with chemistry because I don't understand it.
 
 ## TODO
 - [x] Specific property notes lookup
-- [ ] Adding notes through CLI
-- [ ] Editing notes through CLI
+- [x] Adding notes through CLI
+- [x] Editing notes through CLI
 - [ ] Deleteing notes through CLI
 - [ ] Update titles of notes to show common name
 - [ ] Migrate to termion to display colors
