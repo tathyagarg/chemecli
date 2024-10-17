@@ -67,6 +67,14 @@ impl NotesReader {
         self.contents[target].clone()
     }
 
+    fn write_to_file(&mut self) {
+        let stringified = stringify(self.serialize_contents());
+
+        let mut file = File::create(&self.source_file).unwrap();
+        file.write_all(stringified.as_bytes()).unwrap();
+        self.contents = self.get_contents();
+    }
+
     pub fn add_notes(&mut self, target: &String, key: &String, value: &String) {
         let mut buffer = self.get_contents();
         let mut subbuffer = buffer[target].clone();
@@ -75,12 +83,7 @@ impl NotesReader {
         buffer.get_mut(target).map(|v| *v = subbuffer);
 
         self.contents = buffer;
-
-        let stringified = stringify(self.serialize_contents());
-
-        let mut file = File::create(&self.source_file).unwrap();
-        file.write_all(stringified.as_bytes()).unwrap();
-        self.contents = self.get_contents();
+        self.write_to_file();
     }
 
     pub fn update_notes(&mut self, target: &String, key: &String, value: &String) {
@@ -96,11 +99,14 @@ impl NotesReader {
         buffer.get_mut(target).map(|v| *v = subbuffer);
 
         self.contents = buffer;
+        self.write_to_file();
+    }
 
-        let stringified = stringify(self.serialize_contents());
+    pub fn create_notes(&mut self, target: &String) {
+        let mut buffer = self.get_contents();
+        buffer.insert(target.clone(), Vec::new());
 
-        let mut file = File::create(&self.source_file).unwrap();
-        file.write_all(stringified.as_bytes()).unwrap();
-        self.contents = self.get_contents();
+        self.contents = buffer;
+        self.write_to_file();
     }
 }

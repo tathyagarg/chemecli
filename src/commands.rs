@@ -222,6 +222,8 @@ fn add(arg: &mut VecDeque<&str>, nr: &mut NotesReader) -> String {
         if let [key, value] = &props[..] {
             nr.add_notes(&target, key, value);
         }
+    } else {
+        nr.create_notes(&target);
     }
 
     String::new()
