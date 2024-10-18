@@ -1,3 +1,5 @@
+use crate::boxup::boxer::boxup;
+use crate::boxup::models::BoxupOptions;
 use crate::colors;
 use crate::table::constants::TABLE;
 use crate::table::utils::display_group;
@@ -32,21 +34,12 @@ impl Table {
     }
 
     pub fn display(&self) -> String {
-        let mut result;
+        let mut result = String::new();
 
         let content = self.content();
 
         let mut element_color_map: HashMap<String, String> = HashMap::new();
         let mut group_color_map: Vec<(String, String)> = Vec::new();
-
-        result = format!("╭{}", self.table_name);
-        result.push_str(
-            (0..(54 - self.table_name.len()))
-                .map(|_| "─")
-                .collect::<String>()
-                .as_str(),
-        );
-        result.push_str("╮\r\n");
 
         for group in content["groups"].members() {
             let json_color = &group["color"];
@@ -62,29 +55,17 @@ impl Table {
         }
 
         for group in TABLE {
-            for (i, curr) in group.iter().enumerate() {
+            for (_, curr) in group.iter().enumerate() {
                 let push = if curr.len() == 1 { " " } else { "" };
-
-                if i == 0 {
-                    result.push('│');
-                }
 
                 result.push_str(element_color_map.get(*curr).unwrap_or(&String::from("")));
                 result.push_str(curr);
                 result.push_str(push);
                 result.push(' ');
                 result.push_str("\x1b[0m");
-
-                if i == 17 {
-                    result.push('│');
-                }
             }
-            result.push_str("\r\n");
+            result.push('\n');
         }
-
-        result.push('│');
-        result.push_str((0..54).map(|_| " ").collect::<String>().as_str());
-        result.push_str("│\r\n");
 
         let mut curr_obj: &(String, String);
         let group_count = group_color_map.len() / 2;
@@ -94,7 +75,7 @@ impl Table {
             display_group(curr_obj, &mut result, 0);
             curr_obj = &group_color_map[i + group_count];
             display_group(curr_obj, &mut result, 1);
-            result.push_str("\r\n");
+            result.push('\n');
         }
 
         if group_count * 2 != group_color_map.len() {
@@ -103,11 +84,12 @@ impl Table {
             for _ in 0..27 {
                 result.push(' ');
             }
-            result.push_str("│\r\n");
         }
-        result.push('╰');
-        result.push_str((0..54).map(|_| "─").collect::<String>().as_str());
-        result.push_str("╯\r\n");
-        result
+
+        boxup(
+            self.table_name.clone(),
+            result,
+            BoxupOptions::new().max_width(56),
+        )
     }
 }

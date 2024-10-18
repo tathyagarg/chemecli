@@ -1,5 +1,7 @@
+use super::utils::len;
 use crate::utils::wrap;
 use std::cmp::max;
+use std::iter::zip;
 
 use super::models::{Alignment::*, BoxupOptions, OverflowHandler::*};
 
@@ -8,15 +10,10 @@ pub fn boxup(title: String, content: String, options: BoxupOptions) -> String {
 
     let mut elements = content
         .split("\n")
-        .filter(|elem| elem.len() > 0)
+        .filter(|elem| len(elem) > 0)
         .collect::<Vec<&str>>();
     let mut longest = max(
-        elements
-            .clone()
-            .iter()
-            .map(|elem| elem.len())
-            .max()
-            .unwrap(),
+        elements.clone().iter().map(|elem| len(elem)).max().unwrap(),
         title.len() + 1,
     );
 
@@ -74,6 +71,8 @@ pub fn boxup(title: String, content: String, options: BoxupOptions) -> String {
             }
             .as_str(),
         );
+
+        //        print!("{:?}\r\n", buffer);
     }
 
     buffer.push('╰');
@@ -83,4 +82,13 @@ pub fn boxup(title: String, content: String, options: BoxupOptions) -> String {
     buffer
 }
 
-// pub fn adjoin(box1: String, box2: String) -> String {}
+pub fn adjoin(box1: String, box2: String) -> String {
+    let mut buffer = String::new();
+    for (l1, l2) in zip(box1.split("\r\n"), box2.split("\r\n")) {
+        buffer.push_str(format!("{}{}\r\n", l1, l2).as_str());
+    }
+
+    buffer.pop();
+    buffer.pop();
+    buffer
+}

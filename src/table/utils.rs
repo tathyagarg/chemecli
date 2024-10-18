@@ -2,9 +2,6 @@ use crate::colors;
 
 pub fn display_group(curr_obj: &(String, String), result: &mut String, start: u8) {
     let (curr_group, curr_color) = curr_obj;
-    if start == 0 {
-        (*result).push('│');
-    }
 
     (*result).push_str(curr_color);
     (*result).push('█');
@@ -14,8 +11,5 @@ pub fn display_group(curr_obj: &(String, String), result: &mut String, start: u8
 
     for _ in 0..(27 - (curr_group.len() + 2) as u16) {
         (*result).push(' ');
-    }
-    if start == 1 {
-        (*result).push('│');
     }
 }

@@ -3,7 +3,8 @@ extern crate json;
 extern crate termion;
 extern crate textwrap;
 
-use buttons::models::Button;
+use boxup::boxer::adjoin;
+use buttons::Button;
 use std::io::{stdin, stdout, Write};
 use std::path::PathBuf;
 use std::vec::Vec;
@@ -53,7 +54,7 @@ fn main() {
         termion::clear::All,
         termion::cursor::Goto(1, 1),
         tables[curr].display(),
-        buttons::make_button_row(&prev_button, &next_button),
+        adjoin(prev_button.display(), next_button.display()),
         buffer
     )
     .unwrap();
@@ -90,7 +91,7 @@ fn main() {
             termion::clear::All,
             termion::cursor::Goto(1, 1),
             tables[curr].display(),
-            buttons::make_button_row(&prev_button, &next_button),
+            adjoin(prev_button.display(), next_button.display()),
             temp_buffer,
             buffer
         )
