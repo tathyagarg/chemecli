@@ -1,9 +1,13 @@
 use itertools::EitherOrBoth::{Both, Left, Right};
 use itertools::Itertools;
+use textwrap::Options;
 
+use crate::boxup::boxer::{adjoin, boxup};
+use crate::boxup::models::{BoxupOptions, OverflowHandler};
 use crate::commands::utils::parse_strings;
 use crate::notes::NotesReader;
 use crate::utils::wrap;
+use std::cmp::Ordering;
 use std::collections::VecDeque;
 
 pub fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
@@ -27,136 +31,74 @@ pub fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
         data = buffer;
     }
 
-    let mut res = String::new();
-    let mut longest_key = data.iter().map(|(k, _)| String::len(k)).max().unwrap() + 1;
-    let mut longest_value = data.iter().map(|(_, v)| String::len(v)).max().unwrap() + 1;
+    let (longest_key, longest_value) = (12, 40);
 
-    if longest_key + longest_value > 53 {
-        longest_key = 15;
-        longest_value = 38;
-    }
+    let mut keys = String::new();
+    let mut values = String::new();
 
-    let mut title = format!("╭Read {}", target);
-    title.push_str(
-        (0..(longest_key + longest_value - (4 + target.len())))
-            .map(|_| "─")
-            .collect::<String>()
-            .as_str(),
-    );
-    title.push_str("╮\r\n");
-
-    res.push_str(title.as_str());
-    res.push('├');
-    res.push_str((0..longest_key).map(|_| "─").collect::<String>().as_str());
-    res.push('┬');
-    res.push_str((0..longest_value).map(|_| "─").collect::<String>().as_str());
-    res.push_str("┤\r\n");
-
-    let key_opts = textwrap::Options::new(15).break_words(true);
-    let value_opts = textwrap::Options::new(38).break_words(true);
-
-    let mut i = 0;
+    let key_opts = Options::new(longest_key).break_words(true);
+    let value_opts = Options::new(longest_value).break_words(true);
 
     for (key, value) in &data {
-        if key.len() > longest_key {
-            let wrapped_key = wrap(key, &key_opts);
-            let wrapped_value = wrap(value, &value_opts);
-
-            for (i, pair) in wrapped_key
-                .iter()
-                .zip_longest(wrapped_value.iter())
-                .enumerate()
-            {
-                let (k, v) = match pair {
-                    Both(k1, v1) => (k1, v1),
-                    Left(k1) => (k1, &(0..longest_value).map(|_| " ").collect::<String>()),
-                    Right(v1) => (&(0..longest_key).map(|_| " ").collect::<String>(), v1),
-                };
-
-                let mut resk = String::from(k);
-                let mut resv = String::from(v);
-
-                if k.len() < longest_key {
-                    resk.push_str(
-                        (0..(longest_key - k.len()))
-                            .map(|_| " ")
-                            .collect::<String>()
-                            .as_str(),
-                    );
-                }
-
-                if v.len() < longest_value {
-                    resv.push_str(
-                        (0..(longest_value - v.len()))
-                            .map(|_| " ")
-                            .collect::<String>()
-                            .as_str(),
-                    );
-                }
-
-                resk = resk.replace("_", " ");
-                if i == 0 {
-                    let mut resk_chars = resk.chars();
-                    resk = match resk_chars.next() {
-                        Some(c) => c.to_uppercase().chain(resk_chars).collect(),
-                        None => String::new(),
-                    };
-                }
-
-                res.push_str(format!("│{}│{}│\r\n", resk, resv).as_str());
-            }
+        let mut kbuf: Vec<String> = if key.len() > longest_key {
+            wrap(key, &key_opts)
         } else {
-            let resk = key;
-            let resk = &resk.replace("_", " ");
-            let mut resk_chars = resk.chars();
-            let resk = match resk_chars.next() {
-                Some(c) => &c.to_uppercase().chain(resk_chars).collect(),
-                None => &String::new(),
-            };
+            Vec::from([key.to_string()])
+        };
 
-            res.push_str(
-                format!(
-                    "│{}{}│{}{}│\r\n",
-                    textwrap::fill(resk, &key_opts),
-                    if key.len() <= longest_key {
-                        (0..(longest_key - key.len()))
-                            .map(|_| " ")
-                            .collect::<String>()
-                    } else {
-                        String::new()
-                    },
-                    textwrap::fill(value, &value_opts),
-                    if value.len() <= longest_value {
-                        (0..(longest_value - value.len()))
-                            .map(|_| " ")
-                            .collect::<String>()
-                    } else {
-                        String::new()
-                    },
-                )
-                .as_str(),
-            );
-        }
+        let mut vbuf = if value.len() > longest_value {
+            wrap(value, &value_opts)
+        } else {
+            Vec::from([value.to_string()])
+        };
 
-        i += 1;
+        match vbuf.len().cmp(&kbuf.len()) {
+            Ordering::Less => {
+                for _ in 0..(kbuf.len() - vbuf.len()) {
+                    vbuf.push(" ".to_string());
+                }
+            }
+            Ordering::Greater => {
+                for _ in 0..(vbuf.len() - kbuf.len()) {
+                    kbuf.push(" ".to_string())
+                }
+            }
+            Ordering::Equal => {}
+        };
 
-        if i < data.len() {
-            res.push_str(
-                format!(
-                    "├{}┼{}┤\r\n",
-                    (0..longest_key).map(|_| "─").collect::<String>(),
-                    (0..longest_value).map(|_| "─").collect::<String>()
-                )
-                .as_str(),
-            );
-        }
+        keys.push_str(
+            format!(
+                "{}\n",
+                kbuf.iter()
+                    .fold(String::new(), |acc, elem| format!("{}{}\n", acc, elem))
+            )
+            .as_str(),
+        );
+
+        values.push_str(
+            format!(
+                "{}\n",
+                vbuf.iter()
+                    .fold(String::new(), |acc, elem| format!("{}{}\n", acc, elem))
+            )
+            .as_str(),
+        );
     }
 
-    res.push('╰');
-    res.push_str((0..longest_key).map(|_| "─").collect::<String>().as_str());
-    res.push('┴');
-    res.push_str((0..longest_value).map(|_| "─").collect::<String>().as_str());
-    res.push_str("╯\r\n");
-
-    res
+    adjoin(
+        boxup(
+            "Keys".to_string(),
+            keys[..(keys.len() - 2)].to_string(),
+            BoxupOptions::new()
+                .max_width(longest_key + 2)
+                .overflow_handler(OverflowHandler::Ellipses),
+        ),
+        boxup(
+            "Values".to_string(),
+            values[..(values.len() - 2)].to_string(),
+            BoxupOptions::new()
+                .max_width(longest_value + 2)
+                .overflow_handler(OverflowHandler::Ellipses),
+        ),
+    )
 }

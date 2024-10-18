@@ -8,10 +8,7 @@ use super::models::{Alignment::*, BoxupOptions, OverflowHandler::*};
 pub fn boxup(title: String, content: String, options: BoxupOptions) -> String {
     let wrapped: Vec<String>;
 
-    let mut elements = content
-        .split("\n")
-        .filter(|elem| len(elem) > 0)
-        .collect::<Vec<&str>>();
+    let mut elements = content.split("\n").collect::<Vec<&str>>();
     let mut longest = max(
         elements.clone().iter().map(|elem| len(elem)).max().unwrap(),
         title.len() + 1,
@@ -63,14 +60,21 @@ pub fn boxup(title: String, content: String, options: BoxupOptions) -> String {
     buffer.push_str("╮\r\n");
 
     for elem in elements {
-        buffer.push_str(
-            match options.alignment {
-                Left => format!("│{:<longest$}│\r\n", elem),
-                Center => format!("│{:^longest$}│\r\n", elem),
-                Right => format!("│{:>longest$}│\r\n", elem),
-            }
-            .as_str(),
-        );
+        if elem.len() > 0 {
+            buffer.push_str(
+                match options.alignment {
+                    Left => format!("│{:<longest$}│\r\n", elem),
+                    Center => format!("│{:^longest$}│\r\n", elem),
+                    Right => format!("│{:>longest$}│\r\n", elem),
+                }
+                .as_str(),
+            );
+        } else {
+            buffer.push_str(format!("├{:─^longest$}┤\r\n", elem).as_str());
+            //buffer.push('├');
+            //buffer.push_str((0..(longest)).map(|_| "─").collect::<String>().as_str());
+            //buffer.push_str("┤\r\n");
+        }
 
         //        print!("{:?}\r\n", buffer);
     }

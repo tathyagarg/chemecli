@@ -84,6 +84,8 @@ impl Table {
             for _ in 0..27 {
                 result.push(' ');
             }
+        } else {
+            result.pop();
         }
 
         boxup(
