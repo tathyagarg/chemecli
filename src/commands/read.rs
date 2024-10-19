@@ -1,5 +1,3 @@
-use itertools::EitherOrBoth::{Both, Left, Right};
-use itertools::Itertools;
 use textwrap::Options;
 
 use crate::boxup::boxer::{adjoin, boxup};
@@ -91,14 +89,18 @@ pub fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
             keys[..(keys.len() - 2)].to_string(),
             BoxupOptions::new()
                 .max_width(longest_key + 2)
-                .overflow_handler(OverflowHandler::Ellipses),
+                .overflow_handler(OverflowHandler::Ellipses)
+                .line_after_title(true)
+                .line_after_newline(true),
         ),
         boxup(
             "Values".to_string(),
             values[..(values.len() - 2)].to_string(),
             BoxupOptions::new()
                 .max_width(longest_value + 2)
-                .overflow_handler(OverflowHandler::Ellipses),
+                .overflow_handler(OverflowHandler::Ellipses)
+                .line_after_title(true)
+                .line_after_newline(true),
         ),
     )
 }

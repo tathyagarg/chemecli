@@ -1,6 +1,6 @@
 use crate::colors;
 
-pub fn display_group(curr_obj: &(String, String), result: &mut String, start: u8) {
+pub fn display_group(curr_obj: &(String, String), result: &mut String) {
     let (curr_group, curr_color) = curr_obj;
 
     (*result).push_str(curr_color);

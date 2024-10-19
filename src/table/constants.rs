@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use phf::phf_map;
 
 pub const TABLE: [[&str; 18]; 10] = [
@@ -43,17 +41,6 @@ pub const TABLE: [[&str; 18]; 10] = [
         "  ", "  ", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md",
         "No", "  ", "  ",
     ],
-];
-
-const ELEMENTS: &[&str] = &[
-    "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl",
-    "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As",
-    "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In",
-    "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb",
-    "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl",
-    "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk",
-    "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh",
-    "Fl", "Mc", "Lv", "Ts", "Og",
 ];
 
 const DATA: phf::Map<&'static str, [&'static str; 28]> = phf_map! {
@@ -180,14 +167,32 @@ const DATA: phf::Map<&'static str, [&'static str; 28]> = phf_map! {
 pub struct Builtins {
     pub names: &'static [&'static str],
     pub labels: &'static [&'static str],
-    pub indices: &'static [u8],
     pub data: phf::Map<&'static str, [&'static str; 28]>,
 }
 
 pub const BUILTINS: Builtins = Builtins {
-    names: &["Names"],
-    labels: &["name"],
-    indices: &[1],
+    names: &[
+        "Atomic Number",
+        "Names",
+        "Symbol",
+        "Atomic Mass",
+        "Neutrons",
+        "Protons",
+        "Electrons",
+        "Period",
+        "Group",
+    ],
+    labels: &[
+        "number",
+        "name",
+        "symbol",
+        "mass",
+        "neutrons",
+        "protons",
+        "electrons",
+        "period",
+        "group",
+    ],
     data: DATA,
 };
 

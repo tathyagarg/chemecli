@@ -59,6 +59,14 @@ pub fn boxup(title: String, content: String, options: BoxupOptions) -> String {
     );
     buffer.push_str("╮\r\n");
 
+    if options.line_after_title {
+        buffer.push('├');
+        buffer.push_str((0..longest).map(|_| "─").collect::<String>().as_str());
+        buffer.push_str("┤\r\n");
+    }
+
+    println!("{:?}", elements);
+
     for elem in elements {
         if elem.len() > 0 {
             buffer.push_str(
@@ -69,14 +77,9 @@ pub fn boxup(title: String, content: String, options: BoxupOptions) -> String {
                 }
                 .as_str(),
             );
-        } else {
+        } else if options.line_after_newline {
             buffer.push_str(format!("├{:─^longest$}┤\r\n", elem).as_str());
-            //buffer.push('├');
-            //buffer.push_str((0..(longest)).map(|_| "─").collect::<String>().as_str());
-            //buffer.push_str("┤\r\n");
         }
-
-        //        print!("{:?}\r\n", buffer);
     }
 
     buffer.push('╰');

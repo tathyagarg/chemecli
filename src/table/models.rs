@@ -55,7 +55,7 @@ impl Table {
         }
 
         for group in TABLE {
-            for (_, curr) in group.iter().enumerate() {
+            for curr in &group {
                 let push = if curr.len() == 1 { " " } else { "" };
 
                 result.push_str(element_color_map.get(*curr).unwrap_or(&String::from("")));
@@ -72,15 +72,15 @@ impl Table {
 
         for i in 0..group_count {
             curr_obj = &group_color_map[i];
-            display_group(curr_obj, &mut result, 0);
+            display_group(curr_obj, &mut result);
             curr_obj = &group_color_map[i + group_count];
-            display_group(curr_obj, &mut result, 1);
+            display_group(curr_obj, &mut result);
             result.push('\n');
         }
 
         if group_count * 2 != group_color_map.len() {
             curr_obj = group_color_map.last().unwrap();
-            display_group(curr_obj, &mut result, 0);
+            display_group(curr_obj, &mut result);
             for _ in 0..27 {
                 result.push(' ');
             }
@@ -91,7 +91,7 @@ impl Table {
         boxup(
             self.table_name.clone(),
             result,
-            BoxupOptions::new().max_width(56),
+            BoxupOptions::new().max_width(56).line_after_title(true),
         )
     }
 }

@@ -14,12 +14,12 @@ A CLI tool to help me with chemistry because I don't understand it.
 - [x] Adding notes through CLI
 - [x] Editing notes through CLI
 - [x] Deleteing notes through CLI
-- [ ] More inbuilt data
-    - [ ] Atomic Numbers
-    - [ ] Atomic Masses
-- [ ] Command to lookup inbuilt data
-    - [ ] lookup | l <property> <target> - Lookup inbuilt property of target 
-    - [ ] lookup list | ll - List all inbuilt properties, along with their constraints
+- [x] More inbuilt data
+    - [x] Atomic Numbers
+    - [x] Atomic Masses
+- [x] Command to lookup inbuilt data
+    - [x] lookup | l <target> <property> - Lookup inbuilt property of target 
+    - [x] lookup list | ll - List all inbuilt properties, along with their constraints
 - [ ] Command line arguments for groups
 - [ ] Compound molar mass calculator
 - [ ] Notes about chemical equations 
