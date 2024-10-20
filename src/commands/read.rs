@@ -4,11 +4,9 @@ use crate::boxup::boxer::{adjoin, boxup, weaver};
 use crate::boxup::models::{BoxupOptions, OverflowHandler};
 use crate::commands::utils::parse_strings;
 use crate::notes::NotesReader;
-use crate::utils::wrap;
-use std::cmp::Ordering;
 use std::collections::VecDeque;
 
-pub fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
+pub fn read(arg: &mut VecDeque<&str>, nr: &mut NotesReader) -> String {
     let target = String::from(arg.pop_front().unwrap());
     let mut data: Vec<(String, String)> = nr.get_notes(&target);
     let mut props: Vec<&str> = Vec::new();

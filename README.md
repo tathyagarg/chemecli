@@ -20,8 +20,7 @@ A CLI tool to help me with chemistry because I don't understand it.
 - [x] Command to lookup inbuilt data
     - [x] lookup | l <target> <property> - Lookup inbuilt property of target 
     - [x] lookup list | ll - List all inbuilt properties, along with their constraints
-- [ ] Command line arguments for groups
-- [ ] Compound molar mass calculator
+- [x] Compound molar mass calculator
 - [ ] Notes about chemical equations 
 - [ ] Automatic chemical equation balancer
 - [ ] Quiz on notes
