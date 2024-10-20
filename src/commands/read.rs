@@ -1,6 +1,6 @@
 use textwrap::Options;
 
-use crate::boxup::boxer::{adjoin, boxup};
+use crate::boxup::boxer::{adjoin, boxup, weaver};
 use crate::boxup::models::{BoxupOptions, OverflowHandler};
 use crate::commands::utils::parse_strings;
 use crate::notes::NotesReader;
@@ -30,63 +30,18 @@ pub fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
     }
 
     let (longest_key, longest_value) = (12, 40);
-
-    let mut keys = String::new();
-    let mut values = String::new();
-
-    let key_opts = Options::new(longest_key).break_words(true);
-    let value_opts = Options::new(longest_value).break_words(true);
-
-    for (key, value) in &data {
-        let mut kbuf: Vec<String> = if key.len() > longest_key {
-            wrap(key, &key_opts)
-        } else {
-            Vec::from([key.to_string()])
-        };
-
-        let mut vbuf = if value.len() > longest_value {
-            wrap(value, &value_opts)
-        } else {
-            Vec::from([value.to_string()])
-        };
-
-        match vbuf.len().cmp(&kbuf.len()) {
-            Ordering::Less => {
-                for _ in 0..(kbuf.len() - vbuf.len()) {
-                    vbuf.push(" ".to_string());
-                }
-            }
-            Ordering::Greater => {
-                for _ in 0..(vbuf.len() - kbuf.len()) {
-                    kbuf.push(" ".to_string())
-                }
-            }
-            Ordering::Equal => {}
-        };
-
-        keys.push_str(
-            format!(
-                "{}\n",
-                kbuf.iter()
-                    .fold(String::new(), |acc, elem| format!("{}{}\n", acc, elem))
-            )
-            .as_str(),
-        );
-
-        values.push_str(
-            format!(
-                "{}\n",
-                vbuf.iter()
-                    .fold(String::new(), |acc, elem| format!("{}{}\n", acc, elem))
-            )
-            .as_str(),
-        );
-    }
+    let (key, value) = weaver(
+        &data,
+        longest_key,
+        longest_value,
+        Options::new(longest_key).break_words(true),
+        Options::new(longest_value).break_words(true),
+    );
 
     adjoin(
         boxup(
             "Keys".to_string(),
-            keys[..(keys.len() - 2)].to_string(),
+            key,
             BoxupOptions::new()
                 .max_width(longest_key + 2)
                 .overflow_handler(OverflowHandler::Ellipses)
@@ -95,7 +50,7 @@ pub fn read(arg: &mut VecDeque<&str>, nr: &NotesReader) -> String {
         ),
         boxup(
             "Values".to_string(),
-            values[..(values.len() - 2)].to_string(),
+            value,
             BoxupOptions::new()
                 .max_width(longest_value + 2)
                 .overflow_handler(OverflowHandler::Ellipses)

@@ -1,5 +1,7 @@
-use crate::boxup::boxer::{adjoin, boxup};
-use crate::boxup::models::{Alignment, BoxupOptions};
+use textwrap::Options;
+
+use crate::boxup::boxer::{adjoin, boxup, weaver};
+use crate::boxup::models::{Alignment, BoxupOptions, OverflowHandler};
 use crate::commands::utils::parse_strings;
 use crate::notes::NotesReader;
 use crate::table::constants::{self, BUILTINS};
@@ -60,13 +62,46 @@ pub fn lookup(arg: &mut VecDeque<&str>, nr: &mut NotesReader) -> String {
 
         let props = parse_strings(&props);
         if let [key] = &props[..] {
-            return boxup(
+            boxup(
                 format!("Lookup {}:{}", target, key),
                 target_lookup(target, key),
                 BoxupOptions::new().line_after_title(true),
-            );
-        }
+            )
+        } else {
+            let mut data: Vec<(String, String)> = Vec::new();
+            for prop in props {
+                data.push((prop.clone(), target_lookup(target, &prop)))
+            }
 
-        String::from("new")
+            let (longest_key, longest_value) = (12, 40);
+            let (key, value) = weaver(
+                &data,
+                longest_key,
+                longest_value,
+                Options::new(longest_key).break_words(true),
+                Options::new(longest_value).break_words(true),
+            );
+
+            adjoin(
+                boxup(
+                    "Keys".to_string(),
+                    key,
+                    BoxupOptions::new()
+                        .max_width(longest_key + 2)
+                        .overflow_handler(OverflowHandler::Ellipses)
+                        .line_after_title(true)
+                        .line_after_newline(true),
+                ),
+                boxup(
+                    "Values".to_string(),
+                    value,
+                    BoxupOptions::new()
+                        .max_width(longest_value + 2)
+                        .overflow_handler(OverflowHandler::Ellipses)
+                        .line_after_title(true)
+                        .line_after_newline(true),
+                ),
+            )
+        }
     }
 }

@@ -1,7 +1,9 @@
 use super::utils::len;
 use crate::utils::wrap;
 use std::cmp::max;
+use std::cmp::Ordering;
 use std::iter::zip;
+use textwrap::Options;
 
 use super::models::{Alignment::*, BoxupOptions, OverflowHandler::*};
 
@@ -98,4 +100,67 @@ pub fn adjoin(box1: String, box2: String) -> String {
     buffer.pop();
     buffer.pop();
     buffer
+}
+
+pub fn weaver(
+    data: &Vec<(String, String)>,
+    longest_key: usize,
+    longest_value: usize,
+    key_opts: Options,
+    value_opts: Options,
+) -> (String, String) {
+    let mut keys = String::new();
+    let mut values = String::new();
+
+    for (key, value) in data {
+        let mut kbuf: Vec<String> = if key.len() > longest_key {
+            wrap(key, &key_opts)
+        } else {
+            Vec::from([key.to_string()])
+        };
+
+        let mut vbuf = if value.len() > longest_value {
+            wrap(value, &value_opts)
+        } else {
+            Vec::from([value.to_string()])
+        };
+
+        match vbuf.len().cmp(&kbuf.len()) {
+            Ordering::Less => {
+                for _ in 0..(kbuf.len() - vbuf.len()) {
+                    vbuf.push(" ".to_string());
+                }
+            }
+            Ordering::Greater => {
+                for _ in 0..(vbuf.len() - kbuf.len()) {
+                    kbuf.push(" ".to_string())
+                }
+            }
+            Ordering::Equal => {}
+        };
+
+        keys.push_str(
+            format!(
+                "{}\n",
+                kbuf.iter()
+                    .fold(String::new(), |acc, elem| format!("{}{}\n", acc, elem))
+            )
+            .as_str(),
+        );
+
+        values.push_str(
+            format!(
+                "{}\n",
+                vbuf.iter()
+                    .fold(String::new(), |acc, elem| format!("{}{}\n", acc, elem))
+            )
+            .as_str(),
+        );
+    }
+
+    // Get elements in 0..-2 to remove the trailing \n\n
+    (
+        keys[..(keys.len() - 2)].to_string(),
+        values[..values.len() - 2].to_string(),
+    )
 }

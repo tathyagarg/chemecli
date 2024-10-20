@@ -26,6 +26,7 @@ fn main() {
     let mut nr = notes::NotesReader::new(PathBuf::from("elements.json"));
     let mut temp_buffer: String = String::new();
     let mut buffer: String = String::new();
+    let mut history: Vec<String> = Vec::new();
 
     let table_names: Vec<String> = utils::get_tables(&source_file);
     let tables: Vec<table::models::Table> = (table_names.clone())
@@ -67,6 +68,7 @@ fn main() {
             Key::Ctrl('c') => break,
             Key::Char('\n') => {
                 buffer = temp_buffer.clone();
+                history.push(temp_buffer.clone());
                 temp_buffer = String::new();
                 buffer = commands::parse_command(&mut nr, &buffer);
             }
@@ -79,6 +81,10 @@ fn main() {
             }
             Key::Left => curr = if curr == 0 { table_count - 1 } else { curr - 1 },
             Key::Right => curr = (curr + 1) % table_count,
+            Key::Up => {
+                buffer = String::new();
+                temp_buffer = history.pop().unwrap();
+            }
             _ => {}
         }
 
