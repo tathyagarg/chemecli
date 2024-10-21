@@ -9,3 +9,4 @@ json = "*"
 textwrap = "*"
 itertools = "0.13.0"
 phf = { version = "0.11.2", features = ["macros"] }
+clap = { version = "4.5.20", features = ["derive"] }

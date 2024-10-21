@@ -2,12 +2,25 @@ use crate::boxup::boxer::boxup;
 use crate::boxup::models::BoxupOptions;
 use crate::colors;
 use crate::table::constants::TABLE;
-use crate::table::utils::display_group;
 
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::PathBuf;
+
+pub fn display_group(curr_obj: &(String, String), result: &mut String) {
+    let (curr_group, curr_color) = curr_obj;
+
+    (*result).push_str(curr_color);
+    (*result).push('█');
+    (*result).push_str(colors::RESET);
+    (*result).push(' ');
+    (*result).push_str(curr_group);
+
+    for _ in 0..(27 - (curr_group.len() + 2) as u16) {
+        (*result).push(' ');
+    }
+}
 
 pub struct Table {
     pub source_file: PathBuf,

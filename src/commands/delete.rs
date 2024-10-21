@@ -1,4 +1,4 @@
-use crate::commands::utils::parse_strings;
+use crate::commands::parse_strings;
 use crate::notes::NotesReader;
 use std::collections::VecDeque;
 

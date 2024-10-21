@@ -8,12 +8,16 @@ use json::{stringify, JsonValue};
 
 pub struct NotesReader {
     pub source_file: PathBuf,
+
+    /* Contents is a private attribute to prevent user from mutating it directly */
     contents: HashMap<String, Vec<(String, String)>>,
 }
 
 impl NotesReader {
     pub fn new(source_file: PathBuf) -> NotesReader {
         let contents: HashMap<String, Vec<(String, String)>> = HashMap::new();
+
+        // Initialize a NotesReader with no contents
         let mut er = NotesReader {
             source_file,
             contents,
@@ -24,6 +28,8 @@ impl NotesReader {
     }
 
     pub fn set_contents(&mut self) {
+        /* Opens the source file and resets the contents variable */
+
         let mut file = File::open(&self.source_file).unwrap();
         let mut contents = String::new();
 
@@ -46,6 +52,8 @@ impl NotesReader {
     }
 
     fn serialize_contents(&self) -> JsonValue {
+        /* Takes the current contents and serializes them into JSON objects for further use. */
+
         let mut parent = JsonValue::new_object();
         for (target, elem) in self.get_contents() {
             let mut value_buff = JsonValue::new_object();
@@ -60,14 +68,20 @@ impl NotesReader {
     }
 
     pub fn get_contents(&self) -> HashMap<String, Vec<(String, String)>> {
+        /* Contents getter */
+
         self.contents.clone()
     }
 
     pub fn get_notes(&self, target: &String) -> Vec<(String, String)> {
+        /* Get notes of a specific element */
+
         self.contents[target].clone()
     }
 
     fn write_to_file(&mut self) {
+        /* Private function to rewrite contents into the source file */
+
         let stringified = stringify(self.serialize_contents());
 
         let mut file = File::create(&self.source_file).unwrap();
@@ -76,17 +90,26 @@ impl NotesReader {
     }
 
     pub fn add_notes(&mut self, target: &String, key: &str, value: &str) {
+        /* Add note about given target */
+
         let mut buffer = self.get_contents();
-        let mut subbuffer = buffer[target].clone();
+        let mut subbuffer = self.get_notes(target);
 
         subbuffer.push((String::from(key), String::from(value)));
-        buffer.get_mut(target).map(|v| *v = subbuffer);
+        let _ = buffer
+            .get_mut(target)
+            .unwrap()
+            .iter_mut()
+            .enumerate()
+            .map(|(i, v)| *v = subbuffer[i].clone());
 
         self.contents = buffer;
         self.write_to_file();
     }
 
     pub fn update_notes(&mut self, target: &String, key: &String, value: &str) {
+        /* Update notes of the given target */
+
         let mut buffer = self.get_contents();
         let mut subbuffer = buffer[target].clone();
 
@@ -97,13 +120,21 @@ impl NotesReader {
                 break;
             }
         }
-        buffer.get_mut(target).map(|v| *v = subbuffer);
+
+        let _ = buffer
+            .get_mut(target)
+            .unwrap()
+            .iter_mut()
+            .enumerate()
+            .map(|(i, v)| *v = subbuffer[i].clone());
 
         self.contents = buffer;
         self.write_to_file();
     }
 
     pub fn create_notes(&mut self, target: &str) {
+        /* Create an empty note for the given target */
+
         let mut buffer = self.get_contents();
         buffer.insert(String::from(target), Vec::new());
 
@@ -112,6 +143,8 @@ impl NotesReader {
     }
 
     pub fn delete_notes(&mut self, target: &String, key: &String) {
+        /* Delete a specific part of notes from the target notes data. */
+
         let mut buffer = self.get_contents();
         let mut subbuffer = buffer[target].clone();
 
@@ -122,13 +155,21 @@ impl NotesReader {
             }
         }
 
-        buffer.get_mut(target).map(|v| *v = subbuffer);
+        let _ = buffer
+            .get_mut(target)
+            .unwrap()
+            .iter_mut()
+            .enumerate()
+            .map(|(i, v)| *v = subbuffer[i].clone());
 
         self.contents = buffer;
         self.write_to_file();
     }
 
     pub fn destroy_notes(&mut self, target: &String) {
+        /* Destroys the entire notes of a given target.
+         * All sub-notes are deleted, along with the key by the value of target */
+
         let mut buffer = self.get_contents();
         buffer.remove(target);
 

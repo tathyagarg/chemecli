@@ -1,5 +1,5 @@
-use super::utils::len;
-use crate::utils::wrap;
+use super::len;
+use super::wrap;
 use std::cmp::max;
 use std::cmp::Ordering;
 use std::iter::zip;

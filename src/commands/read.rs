@@ -2,7 +2,7 @@ use textwrap::Options;
 
 use crate::boxup::boxer::{adjoin, boxup, weaver};
 use crate::boxup::models::{BoxupOptions, OverflowHandler};
-use crate::commands::utils::parse_strings;
+use crate::commands::parse_strings;
 use crate::notes::NotesReader;
 use std::collections::VecDeque;
 
