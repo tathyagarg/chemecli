@@ -14,37 +14,41 @@ use crate::{
     boxup::{boxer::boxup, models::BoxupOptions},
     notes::NotesReader,
 };
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 
 fn appendage(
     count_buffer: &mut u32,
-    elems: &mut Vec<String>,
-    stack: &mut Vec<String>,
+    elems: &mut HashMap<String, u32>,
+    stack: &mut HashMap<String, u32>,
     buffer: &mut String,
     condition: bool,
 ) {
     if *count_buffer > 0 {
-        if (*elems).len() > 0 {
-            for _ in 0..*count_buffer {
-                (*stack).extend((*elems).clone());
+        if !(*elems).is_empty() {
+            for (k, v) in elems.clone() {
+                (*stack).entry(k).and_modify(|x| *x += v).or_insert(v);
             }
-            *elems = Vec::new();
+            *elems = HashMap::new();
         } else {
-            for _ in 0..*count_buffer {
-                (*stack).push(buffer.clone());
-            }
+            (*stack)
+                .entry(buffer.clone())
+                .and_modify(|x| *x += *count_buffer)
+                .or_insert(*count_buffer);
             *buffer = String::new();
         }
         *count_buffer = 0;
-    } else if (*buffer).len() > 0 && condition {
-        (*stack).push(buffer.clone());
+    } else if !(*buffer).is_empty() && condition {
+        (*stack)
+            .entry(buffer.clone())
+            .and_modify(|x| *x += 1)
+            .or_insert(1);
         *buffer = String::new();
     }
 }
 
-fn parse(target: &str) -> Vec<String> {
-    let mut stack: Vec<String> = Vec::new();
-    let mut elems: Vec<String> = Vec::new();
+fn parse(target: &str) -> HashMap<String, u32> {
+    let mut stack: HashMap<String, u32> = HashMap::new();
+    let mut elems: HashMap<String, u32> = HashMap::new();
     let mut buffer: String = String::new();
     let mut count_buffer: u32 = 0;
     let mut skip: usize = 0;
@@ -130,8 +134,8 @@ pub fn command_not_found(_: &mut VecDeque<&str>, _: &mut NotesReader) -> String 
     )
 }
 
-pub fn parse_command(nr: &mut NotesReader, command: &String) -> String {
-    let mut parts = command.as_str().split(" ").collect::<VecDeque<&str>>();
+pub fn parse_command(nr: &mut NotesReader, command: &str) -> String {
+    let mut parts = command.split(" ").collect::<VecDeque<&str>>();
     let command = parts.pop_front();
 
     let action: fn(&mut VecDeque<&str>, &mut NotesReader) -> String = match command {

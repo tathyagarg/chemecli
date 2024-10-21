@@ -1,10 +1,10 @@
 pub mod boxer;
 pub mod models;
 
-pub fn wrap(text: &String, opts: &textwrap::Options) -> Vec<String> {
+pub fn wrap(text: &str, opts: &textwrap::Options) -> Vec<String> {
     let mut res = Vec::new();
 
-    for elem in textwrap::wrap(text.as_str(), opts) {
+    for elem in textwrap::wrap(text, opts) {
         res.push(elem.to_string());
     }
 

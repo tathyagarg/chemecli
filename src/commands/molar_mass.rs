@@ -9,13 +9,13 @@ use crate::{
     commands::parse,
     notes::NotesReader,
 };
-use std::collections::VecDeque;
+use std::collections::{HashMap, VecDeque};
 
-fn calculate_molar_mass(target: Vec<String>) -> f32 {
+fn calculate_molar_mass(target: HashMap<String, u32>) -> f32 {
     let mut res: f32 = 0.;
 
-    for elem in target {
-        res += target_lookup(elem.as_str(), "mass").parse::<f32>().unwrap();
+    for (k, v) in target {
+        res += (v as f32) * target_lookup(k.as_str(), "mass").parse::<f32>().unwrap();
     }
 
     res

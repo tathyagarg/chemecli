@@ -33,7 +33,7 @@ pub fn boxup(title: String, content: String, options: BoxupOptions) -> String {
                     .iter()
                     .map(|elem| {
                         if elem.len() > options.max_width {
-                            format!("{}...", elem[..(options.max_width - 5)].to_string())
+                            format!("{}...", &elem[..(options.max_width - 5)])
                         } else {
                             elem.to_string()
                         }
@@ -70,7 +70,7 @@ pub fn boxup(title: String, content: String, options: BoxupOptions) -> String {
     println!("{:?}", elements);
 
     for elem in elements {
-        if elem.len() > 0 {
+        if !elem.is_empty() {
             buffer.push_str(
                 match options.alignment {
                     Left => format!("│{:<longest$}│\r\n", elem),
