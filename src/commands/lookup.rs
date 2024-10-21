@@ -1,19 +1,24 @@
-use textwrap::Options;
-
-use crate::boxup::boxer::{adjoin, boxup, weaver};
-use crate::boxup::models::{Alignment, BoxupOptions, OverflowHandler};
-use crate::commands::parse_strings;
-use crate::notes::NotesReader;
-use crate::table::constants::{self, BUILTINS};
 use std::collections::VecDeque;
 
+use textwrap::Options;
+
+use super::parse_strings;
+use crate::{
+    boxup::{
+        boxer::{adjoin, boxup, weaver},
+        models::{Alignment, BoxupOptions, OverflowHandler},
+    },
+    notes::NotesReader,
+    table::constants::BUILTINS,
+};
+
 pub fn list(_: &mut VecDeque<&str>, _: &mut NotesReader) -> String {
-    let mut keys = constants::BUILTINS
+    let mut keys = BUILTINS
         .names
         .iter()
         .fold(String::new(), |acc, elem| format!("{}{}\n", acc, elem));
 
-    let mut values = constants::BUILTINS
+    let mut values = BUILTINS
         .labels
         .iter()
         .fold(String::new(), |acc, elem| format!("{}{}\n", acc, elem));

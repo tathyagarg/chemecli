@@ -1,8 +1,4 @@
-use std::collections::HashMap;
-use std::fs::File;
-use std::io::prelude::*;
-use std::path::PathBuf;
-use std::vec::Vec;
+use std::{collections::HashMap, fs::File, io::prelude::*, path::PathBuf, vec::Vec};
 
 use json::{stringify, JsonValue};
 

@@ -1,9 +1,7 @@
+use std::{fs::File, io::prelude::*, path::PathBuf};
+
 pub mod constants;
 pub mod models;
-
-use std::fs::File;
-use std::io::prelude::*;
-use std::path::PathBuf;
 
 pub fn get_tables(source_file: &PathBuf) -> Vec<String> {
     let mut file = File::open(source_file).unwrap();

@@ -1,3 +1,5 @@
+use std::collections::{HashMap, VecDeque};
+
 pub mod delete;
 pub mod lookup;
 pub mod molar_mass;
@@ -14,7 +16,6 @@ use crate::{
     boxup::{boxer::boxup, models::BoxupOptions},
     notes::NotesReader,
 };
-use std::collections::{HashMap, VecDeque};
 
 fn appendage(
     count_buffer: &mut u32,

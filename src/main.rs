@@ -1,17 +1,15 @@
-// #[macro_use]
 extern crate json;
 extern crate termion;
 extern crate textwrap;
 
-use boxup::boxer::adjoin;
-use buttons::Button;
+use std::{
+    io::{stdin, stdout, Write},
+    path::PathBuf,
+    vec::Vec,
+};
+
 use clap::Parser;
-use std::io::{stdin, stdout, Write};
-use std::path::PathBuf;
-use std::vec::Vec;
-use termion::event::Key;
-use termion::input::TermRead;
-use termion::raw::IntoRawMode;
+use termion::{event::Key, input::TermRead, raw::IntoRawMode};
 
 mod boxup;
 mod buttons;
@@ -19,6 +17,8 @@ mod colors;
 mod commands;
 mod notes;
 mod table;
+use boxup::boxer::adjoin;
+use buttons::Button;
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]

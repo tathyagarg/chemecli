@@ -1,6 +1,7 @@
-use crate::commands::parse_strings;
-use crate::notes::NotesReader;
 use std::collections::VecDeque;
+
+use super::parse_strings;
+use crate::notes::NotesReader;
 
 pub fn add(arg: &mut VecDeque<&str>, nr: &mut NotesReader) -> String {
     let target = String::from(arg.pop_front().unwrap());

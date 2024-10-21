@@ -1,15 +1,15 @@
+use std::collections::{HashMap, VecDeque};
+
 use textwrap::Options;
 
-use super::lookup::target_lookup;
+use super::{lookup::target_lookup, parse};
 use crate::{
     boxup::{
         boxer::{adjoin, boxup, weaver},
         models::{Alignment, BoxupOptions},
     },
-    commands::parse,
     notes::NotesReader,
 };
-use std::collections::{HashMap, VecDeque};
 
 fn calculate_molar_mass(target: HashMap<String, u32>) -> f32 {
     let mut res: f32 = 0.;

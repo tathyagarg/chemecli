@@ -1,11 +1,15 @@
-use super::len;
-use super::wrap;
-use std::cmp::max;
-use std::cmp::Ordering;
-use std::iter::zip;
+use std::{
+    cmp::{max, Ordering},
+    iter::zip,
+};
+
 use textwrap::Options;
 
-use super::models::{Alignment::*, BoxupOptions, OverflowHandler::*};
+use super::{
+    len,
+    models::{Alignment::*, BoxupOptions, OverflowHandler::*},
+    wrap,
+};
 
 pub fn boxup(title: String, content: String, options: BoxupOptions) -> String {
     let wrapped: Vec<String>;

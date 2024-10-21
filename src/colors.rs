@@ -1,5 +1,6 @@
-use json::JsonValue;
 use std::collections::HashMap;
+
+use json::JsonValue;
 
 pub const RESET: &str = "\x1b[0m";
 

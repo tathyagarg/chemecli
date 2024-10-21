@@ -1,10 +1,15 @@
+use std::collections::VecDeque;
+
 use textwrap::Options;
 
-use crate::boxup::boxer::{adjoin, boxup, weaver};
-use crate::boxup::models::{BoxupOptions, OverflowHandler};
-use crate::commands::parse_strings;
-use crate::notes::NotesReader;
-use std::collections::VecDeque;
+use super::parse_strings;
+use crate::{
+    boxup::{
+        boxer::{adjoin, boxup, weaver},
+        models::{BoxupOptions, OverflowHandler},
+    },
+    notes::NotesReader,
+};
 
 pub fn read(arg: &mut VecDeque<&str>, nr: &mut NotesReader) -> String {
     let target = String::from(arg.pop_front().unwrap());

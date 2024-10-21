@@ -1,12 +1,10 @@
-use crate::boxup::boxer::boxup;
-use crate::boxup::models::BoxupOptions;
-use crate::colors;
-use crate::table::constants::TABLE;
+use std::{collections::HashMap, fs::File, io::prelude::*, path::PathBuf};
 
-use std::collections::HashMap;
-use std::fs::File;
-use std::io::prelude::*;
-use std::path::PathBuf;
+use super::constants::TABLE;
+use crate::{
+    boxup::{boxer::boxup, models::BoxupOptions},
+    colors,
+};
 
 pub fn display_group(curr_obj: &(String, String), result: &mut String) {
     let (curr_group, curr_color) = curr_obj;
