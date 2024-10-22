@@ -27,7 +27,10 @@ fn appendage(
     if *count_buffer > 0 {
         if !(*elems).is_empty() {
             for (k, v) in elems.clone() {
-                (*stack).entry(k).and_modify(|x| *x += v).or_insert(v);
+                (*stack)
+                    .entry(k)
+                    .and_modify(|x| *x += v * *count_buffer)
+                    .or_insert(v * *count_buffer);
             }
             *elems = HashMap::new();
         } else {
@@ -120,7 +123,6 @@ pub fn parse_strings(items: &Vec<&str>) -> Vec<String> {
             buffer.push_str(temp_buffer.collect::<String>().as_str());
             buffer.push(' ');
         } else {
-            println!("Hello!");
             res.push(item.to_string());
         }
     }
