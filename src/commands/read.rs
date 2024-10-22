@@ -41,6 +41,7 @@ pub fn read(arg: &mut VecDeque<&str>, nr: &mut NotesReader) -> String {
         Options::new(longest_value).break_words(true),
     );
 
+    // Adding 2 to longest_key and longest_value to compensate for box border
     adjoin(
         boxup(
             "Keys".to_string(),

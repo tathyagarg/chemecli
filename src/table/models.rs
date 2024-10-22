@@ -2,7 +2,7 @@ use std::{collections::HashMap, fs::File, io::prelude::*, path::PathBuf};
 
 use super::constants::TABLE;
 use crate::{
-    boxup::{boxer::boxup, models::BoxupOptions},
+    boxup::{boxer::boxup, len, models::BoxupOptions},
     colors,
 };
 
@@ -15,7 +15,9 @@ pub fn display_group(curr_obj: &(String, String), result: &mut String) {
     (*result).push(' ');
     (*result).push_str(curr_group);
 
-    for _ in 0..(27 - (curr_group.len() + 2) as u16) {
+    // Adding 2 because of the full character + ' '
+    // Adding 1 to compensate for the box border
+    for _ in 0..(28 - (len(curr_group) + 2 + 1) as u16) {
         (*result).push(' ');
     }
 }
@@ -67,6 +69,7 @@ impl Table {
 
         for group in TABLE {
             for curr in &group {
+                // If current element symbol is 1 character long, append a " "
                 let push = if curr.len() == 1 { " " } else { "" };
 
                 result.push_str(element_color_map.get(*curr).unwrap_or(&String::from("")));
@@ -92,7 +95,8 @@ impl Table {
         if group_count * 2 != group_color_map.len() {
             curr_obj = group_color_map.last().unwrap();
             display_group(curr_obj, &mut result);
-            for _ in 0..27 {
+            // Subtracting 1 to compensate for border
+            for _ in 0..(28 - 1) {
                 result.push(' ');
             }
         } else {

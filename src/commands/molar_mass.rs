@@ -39,6 +39,7 @@ pub fn molar_mass(props: &mut VecDeque<&str>, _: &mut NotesReader) -> String {
         Options::new(longest_value),
     );
 
+    // Adding 2 to longest_key and longest_value to compensate for box border
     adjoin(
         boxup(
             "Formula".to_string(),

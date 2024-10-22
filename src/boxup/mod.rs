@@ -12,6 +12,8 @@ pub fn wrap(text: &str, opts: &textwrap::Options) -> Vec<String> {
 }
 
 pub fn len(elem: &str) -> usize {
+    println!("{}\r", elem);
+
     let mut length: usize = 0;
     let mut escape: bool = false;
     for char in elem.chars() {
@@ -27,6 +29,9 @@ pub fn len(elem: &str) -> usize {
             length += 1;
         }
     }
+
+    println!("{}", length);
+    // panic!();
 
     length
 }

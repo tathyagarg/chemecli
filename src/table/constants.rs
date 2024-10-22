@@ -43,6 +43,7 @@ pub const TABLE: [[&str; 18]; 10] = [
     ],
 ];
 
+const BUILTIN_FIELDS: usize = 28;
 const DATA: phf::Map<&'static str, [&'static str; 28]> = phf_map! {
     "H" => ["1", "Hydrogen", "H", "1.007", "0", "1", "1", "1", "1", "gas", "", "yes", "", "yes", "", "Nonmetal", "0.79", "2.2", "13.5984", "8.99E-05", "14.175", "20.28", "3", "Cavendish", "1766", "14.304", "1", "1"],
     "He" => ["2", "Helium", "He", "4.002", "2", "2", "2", "1", "18", "gas", "", "yes", "", "yes", "", "Noble Gas", "0.49", "", "24.5874", "1.79E-04", "", "4.22", "5", "Janssen", "1868", "5.193", "1", ""],
@@ -167,7 +168,7 @@ const DATA: phf::Map<&'static str, [&'static str; 28]> = phf_map! {
 pub struct Builtins {
     pub names: &'static [&'static str],
     pub labels: &'static [&'static str],
-    pub data: phf::Map<&'static str, [&'static str; 28]>,
+    pub data: phf::Map<&'static str, [&'static str; BUILTIN_FIELDS]>,
 }
 
 pub const BUILTINS: Builtins = Builtins {
@@ -195,5 +196,3 @@ pub const BUILTINS: Builtins = Builtins {
     ],
     data: DATA,
 };
-
-// let BUILTINS: Vec<(&str, [&str; 2])> = Vec::from([("Names", NAMES)]);
