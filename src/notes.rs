@@ -92,14 +92,10 @@ impl NotesReader {
         let mut subbuffer = self.get_notes(target);
 
         subbuffer.push((String::from(key), String::from(value)));
-        let _ = buffer
-            .get_mut(target)
-            .unwrap()
-            .iter_mut()
-            .enumerate()
-            .map(|(i, v)| *v = subbuffer[i].clone());
+        println!("{:?}", subbuffer);
+        *buffer.get_mut(target).unwrap() = subbuffer;
 
-        self.contents = buffer;
+        self.contents = buffer.clone();
         self.write_to_file();
     }
 

@@ -1,6 +1,31 @@
 # Chemecli
 A CLI tool to help me with chemistry because I don't understand it.
 
+## Commands
+- Read - `read <target>` - reads and prints out the data of an element/compound.
+  - Alias: `r`
+  - Sub-functionality: `r <target> <fields>` reads out only the specified fields of the target.
+
+- Add - `add <target>` - adds the specified target to the elements.json database
+  - Alias: `w`
+
+- Update - `update <target> <key> <value>` - adds data about target to it.
+  - Alias: `u`
+
+- Delete - `delete <target>` - deletes the target from the elements.json database
+  - Alias: `d`
+  - Sub-functionality: `d <target> <fields>` deletes data of only the specified fields
+
+- Lookup - `lookup <target> <fields>` - looks up in-built data about the specified elements.
+  - Alias: `l`
+  - Sub-functionality: `lookup list` - lists all the lookup-able fields
+    - Alias: `ll`
+
+- Molar Mass - `molar <target>` - calculates the molar mass of the given target
+  - Alias `mm`
+  - Sub-functionality: `mm <targets>` - calculates the molar mass of the given targets
+
+
 ## Features
 - [x] Periodic Table in your Terminal
 - [x] Custom Grouping by Colors
@@ -8,8 +33,6 @@ A CLI tool to help me with chemistry because I don't understand it.
 - [x] Multiple Tables
 - [x] Controls to naviagate between multiple tables
 - [x] Viewing tabulated notes
-
-## TODO
 - [x] Specific property notes lookup
 - [x] Adding notes through CLI
 - [x] Editing notes through CLI
