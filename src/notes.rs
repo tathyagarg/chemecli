@@ -92,7 +92,6 @@ impl NotesReader {
         let mut subbuffer = self.get_notes(target);
 
         subbuffer.push((String::from(key), String::from(value)));
-        println!("{:?}", subbuffer);
         *buffer.get_mut(target).unwrap() = subbuffer;
 
         self.contents = buffer.clone();

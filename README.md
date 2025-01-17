@@ -8,8 +8,9 @@ A CLI tool to help me with chemistry because I don't understand it.
 
 - Add - `add <target>` - adds the specified target to the elements.json database
   - Alias: `w`
+  - Sub-functionality: `a <target> <key> <value>` adds the specified key-value pair to the json database.
 
-- Update - `update <target> <key> <value>` - adds data about target to it.
+- Update - `update <target> <key> <value>` - updates data about target.
   - Alias: `u`
 
 - Delete - `delete <target>` - deletes the target from the elements.json database
